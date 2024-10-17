@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 from datetime import datetime
 
@@ -6,6 +7,7 @@ import requests
 
 
 def send_message(url, user_ids):
+    user_ids = json.loads(user_ids)
     headers = {
         "Content-Type": "application/json"
     }
