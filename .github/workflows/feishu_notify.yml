@@ -2,8 +2,6 @@ name: Feishu Webhook Notification
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '18 8 * * *'
 
 permissions:
   contents: write
