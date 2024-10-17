@@ -1,7 +1,7 @@
 import argparse
 import os
-
 import requests
+from datetime import datetime
 
 
 def send_message(url, user_id):
@@ -27,11 +27,23 @@ def send_message(url, user_id):
                             "text": "我们的每日推送与团队研究相关的ArXiv最新论文机器人："
                         }, {
                             "tag": "a",
-                            "text": "ArXiv Radar",
+                            "text": "ArXiv Bot",
                             "href": "https://github.com/IAAR-Shanghai/ArxivBot"
                         }, {
                             "tag": "text",
-                            "text": " 正在开发中"
+                            "text": " 正在开发中..."
+                        }],
+                        [{
+                            "tag": "text",
+                            "text": "【测试成功】艾特群成员"
+                        }],
+                        [{
+                            "tag": "text",
+                            "text": "【测试成功】定时推送"
+                        }],
+                        [{
+                            "tag": "text",
+                            "text": "【测试成功】文件写入&自动push"
                         }]
                     ]
                 }
@@ -44,6 +56,17 @@ def send_message(url, user_id):
         print(f"Message sent successfully: {response.status_code}")
     else:
         print(f"Failed to send message: {response.status_code}, {response.text}")
+    
+    # Save log to text file
+    log_data = (
+        f"timestamp: {datetime.now().isoformat()}\n"
+        f"status_code: {response.status_code}\n"
+        f"response: {response.text}\n"
+    )
+    os.makedirs("logs", exist_ok=True)
+    log_filename = f"logs/log_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+    with open(log_filename, 'w') as log_file:
+        log_file.write(log_data)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Send a message using Feishu bot webhook")
