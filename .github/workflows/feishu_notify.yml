@@ -25,7 +25,7 @@ jobs:
     - name: Run webhook script
       env:
         WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        USER_ID: ${{ secrets.USER_ID }}
+        USER_IDS: ${{ secrets.USER_IDS }}
       run: |
         python feishu_notifier.py
     - name: Commit and push changes

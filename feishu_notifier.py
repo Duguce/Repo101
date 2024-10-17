@@ -1,10 +1,11 @@
 import argparse
 import os
-import requests
 from datetime import datetime
 
+import requests
 
-def send_message(url, user_id):
+
+def send_message(url, user_ids):
     headers = {
         "Content-Type": "application/json"
     }
@@ -20,7 +21,7 @@ def send_message(url, user_id):
                             "text": "你好 "
                         }, {
                             "tag": "at",
-                            "user_id": user_id
+                            "user_id": next(iter(user_ids.values()))
                         }],
                         [{
                             "tag": "text",
@@ -44,6 +45,14 @@ def send_message(url, user_id):
                         [{
                             "tag": "text",
                             "text": "【测试成功】文件写入&自动push"
+                        }],
+                        [{
+                            "tag": "text",
+                            "text": "【测试成功】字典型Secrets"
+                        }],
+                        [{
+                            "tag": "text",
+                            "text": f"【测试成功】当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
                         }]
                     ]
                 }
@@ -55,8 +64,9 @@ def send_message(url, user_id):
     if response.ok:
         print(f"Message sent successfully: {response.status_code}")
     else:
-        print(f"Failed to send message: {response.status_code}, {response.text}")
-    
+        print(
+            f"Failed to send message: {response.status_code}, {response.text}")
+
     # Save log to text file
     log_data = (
         f"timestamp: {datetime.now().isoformat()}\n"
@@ -68,17 +78,21 @@ def send_message(url, user_id):
     with open(log_filename, 'w') as log_file:
         log_file.write(log_data)
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Send a message using Feishu bot webhook")
+    parser = argparse.ArgumentParser(
+        description="Send a message using Feishu bot webhook")
     parser.add_argument("--url", required=False, help="Webhook URL")
-    parser.add_argument("--user_id", required=False, help="User ID to mention")
+    parser.add_argument("--user_ids", required=False,
+                        help="JSON string mapping usernames to their corresponding user IDs to mention.")
     args = parser.parse_args()
 
     # Use GitHub Action secrets if not provided via arguments
     url = args.url or os.getenv("WEBHOOK_URL")
-    user_id = args.user_id or os.getenv("USER_ID")
+    user_ids = args.user_ids or os.getenv("USER_IDS")
 
-    if not url or not user_id:
-        raise ValueError("Both webhook URL and user ID must be provided either as arguments or as environment variables.")
+    if not url or not user_ids:
+        raise ValueError(
+            "Both webhook URL and user data must be provided either as arguments or as environment variables.")
 
-    send_message(url, user_id)
+    send_message(url, user_ids)
